@@ -69,6 +69,8 @@ const DojahWidget = (props: DojahProps) => {
         );
     }, [config.pages]);
 
+    console.log({ needsLocation })
+
 
 
     const log = useCallback(
@@ -159,6 +161,8 @@ const DojahWidget = (props: DojahProps) => {
             .filter((perm) => !!perm)
             .flatMap((item) => item);
 
+        console.log(permissions)
+
 
         console.log("Checking multiple")
 
@@ -224,6 +228,23 @@ const DojahWidget = (props: DojahProps) => {
             });
     }, [getCurrentPosition, log, makeRequest, needsCamera, needsLocation]);
 
+    useEffect(() => {
+
+        if (permissionsNeeded) {
+            requestPermission();
+        }
+        return () => response('close');
+    }, [
+        permissionsNeeded,
+        config.pages,
+        requestPermission,
+        type,
+        needsCamera,
+        needsLocation,
+        response,
+    ]);
+
+
 
     if (permissionsNeeded) {
         if (
@@ -261,79 +282,66 @@ const DojahWidget = (props: DojahProps) => {
         }
     }
 
-    useEffect(() => {
-
-        if (permissionsNeeded) {
-
-            requestPermission();
-        }
-        return () => response('close');
-    }, [
-        permissionsNeeded,
-        config.pages,
-        requestPermission,
-        type,
-        needsCamera,
-        needsLocation,
-        response,
-    ]);
-
     return (
-        <WebView
-            originWhiteList={['*']}
-            javaScriptEnabled={true}
-            scalesPageToFit={true}
-            useWebkit={true}
-            startInLoadingState={true}
-            source={{
-                baseUrl: 'https://widget.dojah.io',
-                html: `
+        <View style={{ width: '100%', height: '100%' }}>
+            <WebView
+                originWhiteList={['*']}
+                javaScriptEnabled={true}
+                scalesPageToFit={true}
+                useWebkit={true}
+                startInLoadingState={true}
+                source={{
+                    baseUrl: 'https://widget.dojah.io',
+                    html: `
                   <html>
                     <head>
                       <script type="application/javascript" src="https://widget.dojah.io/widget.js"></script>
-                      <meta name="viewport" content="width=device-width">
+                      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
                     </head>
                     <body>
                     </body>
                   </html>
                 `,
-            }}
-            injectedJavaScript={injectJavascript(appId, publicKey, type, config, userData, metadata, location && location)}
-            injectedJavaScriptBeforeContentLoadedForMainFrameOnly={true}
-            cacheEnabled={false}
-            mediaPlaybackRequiresUserAction={false}
-            androidLayerType="hardware"
-            allowsInlineMediaPlayback={needsCamera}
-            geolocationEnabled={needsLocation}
-            onMessage={async (e) => {
-                const data = JSON.parse(e.nativeEvent.data);
-                if (data.type === 'success') {
-                    const widgetData = data.data.data;
+                }}
+                injectedJavaScript={injectJavascript(appId, publicKey, type, config, userData, metadata, location && location)}
+                injectedJavaScriptBeforeContentLoadedForMainFrameOnly={true}
+                cacheEnabled={false}
+                mediaPlaybackRequiresUserAction={false}
+                androidLayerType="hardware"
+                allowsInlineMediaPlayback={needsCamera}
+                geolocationEnabled={needsLocation}
+                onMessage={async (e) => {
+                    const data = JSON.parse(e.nativeEvent.data);
+                    if (data.type === 'success') {
+                        const widgetData = data.data.data;
 
-                    await AsyncStorage.setItem(
-                        '@Dojah:SESSION_ID',
-                        data.data.verificationId,
-                    );
+                        await AsyncStorage.setItem(
+                            '@Dojah:SESSION_ID',
+                            data.data.verificationId,
+                        );
 
-                    try {
-                        if (widgetData.address) {
-                            const addressLocation =
-                                widgetData.address.data.location.addressLocation;
-                            await AsyncStorage.setItem(
-                                '@Dojah:LATITUDE',
-                                addressLocation.latitude,
-                            );
-                            await AsyncStorage.setItem(
-                                '@Dojah:LONGITUDE',
-                                addressLocation.longitude,
-                            );
-                        }
-                    } catch { }
-                }
+                        try {
+                            if (widgetData.address) {
+                                const addressLocation =
+                                    widgetData.address.data.location.addressLocation;
+                                await AsyncStorage.setItem(
+                                    '@Dojah:LATITUDE',
+                                    addressLocation.latitude,
+                                );
+                                await AsyncStorage.setItem(
+                                    '@Dojah:LONGITUDE',
+                                    addressLocation.longitude,
+                                );
+                            }
+                        } catch { }
+                    }
 
-                response(data.type, data);
-            }}
-        />
+                    response(data.type, data);
+                }}
+            />
+
+        </View>
+
     )
 }
 

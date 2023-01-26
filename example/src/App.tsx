@@ -6,7 +6,6 @@ import { Dojah } from 'react-native-dojah';
 
 export default function App() {
 
-
   const appId = '6000604fb87ea60035ef41bb';
 
   const publicKey = 'prod_pk_7jspvKP2FMkjkSZx1qnbgiMWy';
@@ -16,19 +15,19 @@ export default function App() {
   const config = {
     debug: true,
     pages: [
-      // { page: 'address' },
-      // {
-      //   page: 'government-data',
-      //   config: {
-      //     bvn: true,
-      //     nin: false,
-      //     dl: false,
-      //     mobile: false,
-      //     otp: false,
-      //     selfie: false,
-      //   },
-      // },
-      { page: 'selfie' },
+      { page: 'address', config: { verification: true } },
+      {
+        page: 'government-data',
+        config: {
+          bvn: true,
+          nin: false,
+          dl: false,
+          mobile: false,
+          otp: false,
+          selfie: false,
+        },
+      },
+      // { page: 'selfie' },
       // { page: 'id', config: { passport: false, dl: true } },
     ],
   };
