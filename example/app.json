@@ -18,7 +18,14 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to scan barcodes on event tickets.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Dojah Example App Needs Your Location To Verify Your Address",
+        "NSLocationAlwaysUsageDescription": "Dojah Example App Needs Your Location To Verify Your Address",
+        "NSLocationWhenInUseUsageDescription": "Dojah Example App Needs Your Location To Verify Your Address"
+      },
+      "bundleIdentifier": "com.anonymous.example"
     },
     "android": {
       "adaptiveIcon": {
