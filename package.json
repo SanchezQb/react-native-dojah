@@ -1,6 +1,6 @@
 {
-  "name": "react-native-dojah",
-  "version": "0.1.0",
+  "name": "react-native-dojah-lib",
+  "version": "0.1.1",
   "description": "test",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
