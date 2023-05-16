@@ -317,7 +317,7 @@ const DojahWidget = (props: DojahProps) => {
 
                         await AsyncStorage.setItem(
                             '@Dojah:SESSION_ID',
-                            data.data.verificationId,
+                            JSON.stringify(data.data.verificationId),
                         );
 
                         try {
